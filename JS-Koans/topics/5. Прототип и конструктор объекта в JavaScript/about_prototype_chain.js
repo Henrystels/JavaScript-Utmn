@@ -1,67 +1,49 @@
-// https://developer.mozilla.org/en/JavaScript/Guide/Inheritance_and_the_prototype_chain
-describe("About Prototype Chain (about_prototype_chain.js)", function() {
-  let father = {
-    b: 3,
-    c: 4
+describe("About Reflection (about_reflection.js)", function() {
+  function A() {
+    this.aprop = "A";
   };
-  
-  let child = Object.create(father);
-  child.a = 1;
-  child.b = 2;
-  
-  /*
-   * ---------------------- ---- ---- ----
-   *                      [a]  [b]  [c]
-   * ---------------------- ---- ---- ----
-   * [child]               1    2
-   * ---------------------- ---- ---- ----
-   * [father]                   3    4
-   * ---------------------- ---- ---- ----
-   * [Object.prototype]
-   * ---------------------- ---- ---- ----
-   * [null]
-   * ---------------------- ---- ---- ----
-   * */
-  
-  it("Is there an 'a' and 'b' own property on child?", function () {
-    // child.hasOwnProperty(\'a\')?
-    expect(FILL_ME_IN).toBe(child.hasOwnProperty('a'));
-    // child.hasOwnProperty(\'b\')?
-    expect(FILL_ME_IN).toBe(child.hasOwnProperty('b'));
+
+  function B() {
+    this.bprop = "B";
+  };
+
+  B.prototype = new A();
+
+  it("hasOwnProperty", function() {
+    let b = new B();
+
+    let keys = [];
+    for (let propertyName in b) {
+      keys.push(propertyName);
+    }
+    // how many elements are in the keys array?
+    expect(2).toBe(keys.length);
+    // what are the properties of the array?
+    expect(["bprop", "aprop"]).toEqual(keys);
+
+    // hasOwnProperty returns true if the parameter is a property directly on the object,
+    // but not if it is a property accessible via the prototype chain.
+    let ownKeys = [];
+    for(let propertyName in b) {
+      if (b.hasOwnProperty(propertyName)) {
+        ownKeys.push(propertyName);
+      }
+    }
+
+    // how many elements are in the ownKeys array?
+    expect(1).toBe(ownKeys.length);
+    // what are the own properties of the array?
+    expect(["bprop"]).toEqual(ownKeys);
   });
-  
-  it("Is there an 'a' and 'b' property on child?", function () {
-    // what is \'a\' value?
-    expect(FILL_ME_IN).toBe(child.a);
-    // what is \'b\' value?
-    expect(FILL_ME_IN).toBe(child.b);
-  });
-  
-  it("If 'b' was removed, whats b value?", function () {
-    delete child.b;
-    // what is \'b\' value now?
-    expect(FILL_ME_IN).toBe(child.b);
-  });
-  
-  
-  it("Is there a 'c' own property on child?", function () {
-    // child.hasOwnProperty(\'c\')?
-    expect(FILL_ME_IN).toBe(child.hasOwnProperty('c'));
-  });
-  
-  // Is there a 'c' own property on child? No, check its prototype
-  // Is there a 'c' own property on child.[[Prototype]]? Yes, its value is...
-  it("Is there a 'c' property on child?", function () {
-    // what is the value of child.c?
-    expect(FILL_ME_IN).toBe(child.c);
-  });
-  
-  
-  // Is there a 'd' own property on child? No, check its prototype
-  // Is there a 'd' own property on child.[[Prototype]]? No, check it prototype
-  // child.[[Prototype]].[[Prototype]] is null, stop searching, no property found, return...
-  it("Is there an 'd' property on child?", function () {
-    // what is the value of child.d?
-    expect(FILL_ME_IN).toBe(child.d);
+
+  it("constructor property", function () {
+    let a = new A();
+    let b = new B();
+    // "what is the type of a's constructor?"
+    expect('function').toBe(typeof(a.constructor));
+    // "what is the name of a's constructor?"
+    expect('A').toBe(a.constructor.name);
+    // "what is the name of b's constructor?"
+    expect('A').toBe(b.constructor.name);
   });
 });

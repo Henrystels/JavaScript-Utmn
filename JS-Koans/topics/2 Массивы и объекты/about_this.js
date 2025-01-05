@@ -44,4 +44,3 @@ describe("About this (about_this.js)", function() {
     expect(message).toBe("Hello, my name is Frank");
   });
 });
-
